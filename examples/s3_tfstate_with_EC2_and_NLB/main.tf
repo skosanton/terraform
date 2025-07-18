@@ -35,5 +35,6 @@ module "s3_tfstate_bucket_2_regions" {
   s3_tfstate_bucket_name                              = "s3-terraform-state"
   environment                                         = "dev"
   project_name                                        = "alpha"
-
+  additional_roles_with_permissions                   = []
+  
 }

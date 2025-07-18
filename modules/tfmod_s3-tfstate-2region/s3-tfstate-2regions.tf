@@ -9,7 +9,7 @@ data "aws_iam_policy_document" "bucket_policy" {
 
     principals {
       type = "AWS"
-      identifiers = concat(["arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"],
+      identifiers = concat(["arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admins"],
       var.additional_roles_with_permissions)
     }
 
