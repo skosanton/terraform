@@ -127,7 +127,7 @@ module "s3-backup_bucket" {
   count = var.use_previously_created_config == true ? 0 : 1
 
   source  = "terraform-aws-modules/s3-bucket/aws"
-  version = "3.4.0"
+  version = "5.2.0"
 
   bucket        = "${var.s3_backup_bucket_name}-${var.project_name}-${random_integer.tag.result}"
   force_destroy = true
