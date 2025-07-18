@@ -62,10 +62,11 @@ data "template_file" "ec2_userdata_tmplt" {
   vars = merge({
     s3_backup_bucket_name = var.use_previously_created_config == true ? var.backup_bucket_to_use : "${var.s3_backup_bucket_name}-${var.project_name}-${random_integer.tag.result}"
     },
-    var.create_mtls_cert == false ? {} : { ca-chain = module.mtls_certificate_for_ec2[count.index].ca-chain,
-      public-cert                                   = module.mtls_certificate_for_ec2[count.index].public-cert,
-      cert-key                                      = module.mtls_certificate_for_ec2[count.index].cert-key
-  }, var.variables_to_pass_to_script)
+  #   var.create_mtls_cert == false ? {} : { ca-chain = module.mtls_certificate_for_ec2[count.index].ca-chain,
+  #     public-cert                                   = module.mtls_certificate_for_ec2[count.index].public-cert,
+  #     cert-key                                      = module.mtls_certificate_for_ec2[count.index].cert-key
+  # }, 
+    var.variables_to_pass_to_script)
 }
 
 

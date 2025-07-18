@@ -28,6 +28,8 @@ terraform {
 
 }
 
+data "aws_caller_identity" "current" {}
+
 module "s3_tfstate_bucket_2_regions" {
   source = "git::https://github.com/skosanton/terraform.git//modules/tfmod_s3-tfstate-2region"
 
@@ -103,6 +105,13 @@ resource "aws_key_pair" "skosanton_mega_key" {
   public_key = var.public_key
 }
 
+locals {
+  environment                                         = "dev"
+  project                                             = "dev"
+  switch_to_backup_config                             = false
+  destroy_all_instances                               = false
+  number_of_puppet_ec2_instances                      = 1
+}
 
 module "EC2_Puppet_in_Primary_Region" {
   source = "git::https://github.com/skosanton/terraform.git//modules/tfmod_ec2_2region"
@@ -129,7 +138,7 @@ module "EC2_Puppet_in_Primary_Region" {
 
   userdata_script                                     = "puppet-Enterprise-primary-install.sh" 
   variables_to_pass_to_script = {       
-    puppet_master_dnsaltnames = format("%#v", concat(local.all_dns_names_for_certificates, ["puppet"]))
+    puppet_master_dnsaltnames = format("%#v", concat(["puppet"]))
   }
 
   list_of_ports = {
@@ -170,7 +179,7 @@ module "EC2_Puppet_in_Secondary_Region" {
 
   userdata_script                                     = "puppet-Enterprise-primary-install.sh"
   variables_to_pass_to_script = {       
-    puppet_master_dnsaltnames   = format("%#v", concat(local.all_dns_names_for_certificates, ["puppet"]))
+    puppet_master_dnsaltnames   = format("%#v", concat(["puppet"]))
   }
 
   list_of_ports = {
