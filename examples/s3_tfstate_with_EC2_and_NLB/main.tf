@@ -45,14 +45,14 @@ module "s3_tfstate_bucket_2_regions" {
 
 }
 
-module "vpc" {
+module "vpc_in_us_west_2" {
   source = "terraform-aws-modules/vpc/aws"
 
   providers = {
   aws                                               = aws
 }
 
-  name = "my-vpc"
+  name = "vpc_in_us_west_2"
   cidr = "10.0.0.0/20"
 
   azs             = ["us-west-2c", "us-west-2d"]
@@ -69,17 +69,17 @@ module "vpc" {
   }
 }
 
-module "vpc" {
+module "vpc_in_us_east_1" {
   source = "terraform-aws-modules/vpc/aws"
 
   providers = {
   aws                                               = aws.backup
 }
 
-  name = "my-vpc"
+  name = "vpc_in_us_east_1"
   cidr = "10.0.16.0/20"
 
-  azs             = ["us-east-1c", "us-east-1d"]
+  azs             = ["us-east-1e", "us-east-1f"]
   private_subnets = ["10.0.16.0/22", "10.0.20.0/22"]
   public_subnets  = ["10.0.24.0/22", "10.0.28.0/22"]
 
