@@ -29,14 +29,29 @@ variable "ec2_volume_type" {
 }
 
 
-variable "ais_approved_ssm_image" {
-  default     = "/AIS/AMI/AmazonLinux2/Id"
+variable "approved_ssm_image" {
+  default     = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"
   type        = string
   description = "AMI to launch"
 }
 
+variable "ami_name" {
+  default = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"
+  type = string
+}
+
+variable "ami_owner" {
+  default = "099720109477"
+  type = string
+}
+
+variable "ami_virtualization_type" {
+  default = "hvm"
+  type = string
+}
+
 variable "key_pair" {
-  default     = "ais-breakglass"
+  default     = ""
   type        = string
   description = "key pair for EC2 SSH"
 }

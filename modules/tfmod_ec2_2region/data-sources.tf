@@ -99,9 +99,26 @@ data "aws_security_groups" "InsideVPCSecurityGroup" {
   }
 }
 
-data "aws_ssm_parameter" "ais_approved_ssm_ami" {
-  name = var.ais_approved_ssm_image
+data "aws_ssm_parameter" "approved_ssm_ami" {
+  name = var.approved_ssm_image
 }
+
+data "aws_ami" "server" {
+  most_recent = true
+
+  filter {
+    name   = "name"
+    values = [var.ami_name]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = [var.ami_virtualization_type]
+  }
+
+  owners = [var.ami_owner] # Canonical
+}
+
 
 data "aws_lambda_function" "s3_vpc_endpoint_updater" {
   function_name = var.lambda_func_arn_vpc_s3_updater

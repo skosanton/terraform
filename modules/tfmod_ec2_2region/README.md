@@ -72,7 +72,7 @@ module "EC2_Puppet_in_Primary_Region" {
   }
 
   count                                               = 1
-  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", module.rio_role[0].rio_role_arn] 
+  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"] 
   environment                                         = local.environment
   project_name                                        = local.project
   default_security_groups_managed_by                  = "GNS"
@@ -80,7 +80,9 @@ module "EC2_Puppet_in_Primary_Region" {
 
   server_role_name                                    = "Puppet"
   number_of_ec2_instances                             = local.destroy_all_instances == true ? 0 : local.switch_to_backup_config == true ? 0 : local.number_of_puppet_ec2_instances
-  ais_approved_ssm_image                              = "/AIS/AMI/AmazonLinux2/Id"
+  ami_name                                            = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" 
+  ami_owner                                           = "099720109477"
+  ami_virtualization_type                             = "hvm"
   ec2_instance_type                                   = "c6i.4xlarge"
   ec2_ssd_size                                        = 200
   ec2_volume_type                                     = "gp3"
@@ -112,10 +114,13 @@ About the parameters sent to the module:
 - `number_of_ec2_instances`. It is examle how many instances of EC2 you want to create.
 - `count` should always be 1. It does not mean how many servers it is going to create. It means that you want to use this module and you need all the configuration to be created. It is important for main module never to be 0. By setting it to 1 you are telling to create s3 bucket, policies, KMS keys. 
 - `additional_roles_with_permissions`. Here you pass the additional roles you would like to have an access to the shared EC2 s3 bucket
-- `default_security_groups_managed_by`. It is used for filter to find correct Denali private subnets. By default, it set to "AIS", but it can be "GNS". You can check it out in VPC - Subnets when you click on Tags for one of Denali private subnets. Tag name is `ManagedBy`
+- `default_security_groups_managed_by`. If you have multiple owners of subnets you can create a tag `ManagedBy` and assign the value here, so it will sort and find correct subnets
 - `environment`. It is just for tagging resources in AWS.
+- `key_pair`. The name of the key pair for EC2 instance to use
 - `server_role_name`. It is be in a name of EC2 instance and in the tags
-- `ais_approved_ssm_image`. AIS requires us to use only approved images for EC2. So you have to use images from AWS parameters store
+- `ami_name`. Name of the AMI to use. If you want to have latest, use something like "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*"
+- `ami_owner`. AMI owner. For ex. "099720109477"
+- `ami_virtualization_type`. Virtualization type. For ex. "hvm"
 - `ec2_instance_type`. [Type](https://aws.amazon.com/ec2/instance-types/) of EC2 instance.
 - `ec2_ssd_size`. SSD size in GB
 - `ec2_volume_type`. [Type](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html) of volume.
@@ -150,15 +155,18 @@ module "EC2_Puppet_in_Primary_Region" {
 
   count                                               = 1
   starting_subnet_index                               = 1
-  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", module.rio_role[0].rio_role_arn] 
+  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"] 
   environment                                         = local.environment
   project_name                                        = local.project
   default_security_groups_managed_by                  = "GNS"
+  key_pair                                            = "skosanton_mega_key"
   use_previously_created_config                       = false
 
   server_role_name                                    = "Puppet"
   number_of_ec2_instances                             = local.destroy_all_instances == true ? 0 : local.switch_to_backup_config == true ? 0 : local.number_of_puppet_ec2_instances
-  ais_approved_ssm_image                              = "/AIS/AMI/AmazonLinux2/Id"
+  ami_name                                            = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" 
+  ami_owner                                           = "099720109477"
+  ami_virtualization_type                             = "hvm"
   ec2_instance_type                                   = "c6i.4xlarge"
   ec2_ssd_size                                        = 200
   ec2_volume_type                                     = "gp3"
@@ -193,15 +201,18 @@ module "EC2_Puppet_compiler_in_Primary_Region" {
 
   count                                               = 1
   starting_subnet_index                               = 0
-  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", module.rio_role[0].rio_role_arn] 
+  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"] 
   environment                                         = local.environment
   project_name                                        = local.project 
   default_security_groups_managed_by                  = "GNS"
+  key_pair                                            = "skosanton_mega_key"
   use_previously_created_config                       = true
 
   server_role_name                                    = "Puppet_compiler"
   number_of_ec2_instances                             = local.destroy_all_instances == true ? 0 : local.switch_to_backup_config == true ? 0 : local.number_of_compiler_instances
-  ais_approved_ssm_image                              = "/AIS/AMI/AmazonLinux2/Id" 
+  ami_name                                            = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" 
+  ami_owner                                           = "099720109477"
+  ami_virtualization_type                             = "hvm"
   ec2_instance_type                                   = "m6i.xlarge"
   ec2_ssd_size                                        = 80
   ec2_volume_type                                     = "gp3"
@@ -250,15 +261,18 @@ module "EC2_Puppet_in_Primary_Region" {
 
   count                                               = 1
   starting_subnet_index                               = 1
-  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", module.rio_role[0].rio_role_arn] 
+  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"] 
   environment                                         = local.environment
   project_name                                        = local.project
   default_security_groups_managed_by                  = "GNS"
+  key_pair                                            = "skosanton_mega_key"
   use_previously_created_config                       = false
 
   server_role_name                                    = "Puppet"
   number_of_ec2_instances                             = local.destroy_all_instances == true ? 0 : local.switch_to_backup_config == true ? 0 : local.number_of_puppet_ec2_instances
-  ais_approved_ssm_image                              = "/AIS/AMI/AmazonLinux2/Id"
+  ami_name                                            = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" 
+  ami_owner                                           = "099720109477"
+  ami_virtualization_type                             = "hvm"
   ec2_instance_type                                   = "c6i.4xlarge"
   ec2_ssd_size                                        = 200
   ec2_volume_type                                     = "gp3"
@@ -293,15 +307,18 @@ module "EC2_Puppet_compiler_in_Primary_Region" {
 
   count                                               = 1
   starting_subnet_index                               = 0
-  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", module.rio_role[0].rio_role_arn] 
+  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"] 
   environment                                         = local.environment
   project_name                                        = local.project 
   default_security_groups_managed_by                  = "GNS"
+  key_pair                                            = "skosanton_mega_key"
   use_previously_created_config                       = true
 
   server_role_name                                    = "Puppet_compiler"
   number_of_ec2_instances                             = local.destroy_all_instances == true ? 0 : local.switch_to_backup_config == true ? 0 : local.number_of_compiler_instances
-  ais_approved_ssm_image                              = "/AIS/AMI/AmazonLinux2/Id" 
+  ami_name                                            = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" 
+  ami_owner                                           = "099720109477"
+  ami_virtualization_type                             = "hvm"  
   ec2_instance_type                                   = "m6i.xlarge"
   ec2_ssd_size                                        = 80
   ec2_volume_type                                     = "gp3"
@@ -342,15 +359,18 @@ module "EC2_Puppet_in_Secondary_Region" {
 
   count                                               = 1
   starting_subnet_index                               = 0
-  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", module.rio_role[0].rio_role_arn] 
+  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"] 
   environment                                         = local.environment
   project_name                                        = local.project
   default_security_groups_managed_by                  = "GNS"
+  key_pair                                            = "skosanton_mega_key"
   use_previously_created_config                       = true
 
   server_role_name                                    = "Puppet"
   number_of_ec2_instances                             = local.destroy_all_instances == true ? 0 : local.switch_to_backup_config == true ? local.number_of_puppet_ec2_instances : 0
-  ais_approved_ssm_image                              = "/AIS/AMI/AmazonLinux2/Id" 
+  ami_name                                            = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" 
+  ami_owner                                           = "099720109477"
+  ami_virtualization_type                             = "hvm"
   ec2_instance_type                                   = "c6i.4xlarge"
   ec2_ssd_size                                        = 200
   ec2_volume_type                                     = "gp3"
@@ -392,15 +412,18 @@ module "EC2_Puppet_compiler_in_Secondary_Region" {
 
   count                                               = 1
   starting_subnet_index                               = 0
-  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", module.rio_role[0].rio_role_arn] 
+  additional_roles_with_permissions                   = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:root", "arn:aws:iam::${data.aws_caller_identity.current.account_id}:group/admin"] 
   environment                                         = local.environment
   project_name                                        = local.project 
   default_security_groups_managed_by                  = "GNS"
+  key_pair                                            = "skosanton_mega_key"
   use_previously_created_config                       = true
 
   server_role_name                                    = "Puppet_compiler"
   number_of_ec2_instances                             = local.destroy_all_instances == true ? 0 : local.switch_to_backup_config == true ? local.number_of_compiler_instances : 0
-  ais_approved_ssm_image                              = "/AIS/AMI/AmazonLinux2/Id" 
+  ami_name                                            = "ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-*" 
+  ami_owner                                           = "099720109477"
+  ami_virtualization_type                             = "hvm"
   ec2_instance_type                                   = "m6i.xlarge"
   ec2_ssd_size                                        = 80
   ec2_volume_type                                     = "gp3"

@@ -85,7 +85,7 @@ module "ec2-instance" {
   data.aws_security_groups.InsideVPCSecurityGroup.ids[0]]
   subnet_id         = count.index == var.starting_subnet_index || count.index % 2 == var.starting_subnet_index ? data.aws_subnet.denali_private_0.id : data.aws_subnet.denali_private_1.id
   availability_zone = count.index == var.starting_subnet_index || count.index % 2 == var.starting_subnet_index ? data.aws_availability_zones.available.names[0] : data.aws_availability_zones.available.names[1]
-  ami               = data.aws_ssm_parameter.ais_approved_ssm_ami.value
+  ami               = data.aws_ami.server
 
   create_iam_instance_profile = true
   iam_role_description        = "IAM role for ${var.project_name}-ec2-${var.server_role_name}-${random_integer.tag.result}-${count.index + 1} instance"
@@ -95,11 +95,11 @@ module "ec2-instance" {
       Terraform = "true"
   Environment = var.environment })
 
-  iam_role_permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/ais-permissions-boundaries"
+  # iam_role_permissions_boundary = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/permissions-boundaries"
 
   iam_role_policies = {
     SSM              = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
-    Logs             = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/AISSystemLogsPolicy"
+    Logs             = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/SystemLogsPolicy"
     s3_backup_bucket = var.use_previously_created_config == false ? aws_iam_policy.s3-terraform-backup_policy[0].arn : var.s3_backup_bucket_iam_policy_arn
   }
 
