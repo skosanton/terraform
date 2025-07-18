@@ -40,19 +40,19 @@ resource "aws_security_group" "security_group" {
 }
 
 
-module "mtls_certificate_for_ec2" {
-  source = "git::https://github.com/skosanton/terraform.git//modules/tfmod_ec2_2region"
+# module "mtls_certificate_for_ec2" {
+#   source = "git::https://github.com/skosanton/terraform.git//modules/tfmod_ec2_2region"
 
-  count = var.create_mtls_cert == true ? var.number_of_ec2_instances : 0
+#   count = var.create_mtls_cert == true ? var.number_of_ec2_instances : 0
 
-  management_group_dsid     = var.mtls_dsid_group
-  identity_group_dsid       = var.mtls_dsid_group
-  cert_type                 = var.mtls_cert_type
-  environment               = var.environment
-  project                   = var.project_name
-  dns_alt_names_for_web_gui = concat(var.mtls_certificate_dns_names, ["${var.project_name}-ec2-${var.server_role_name}-${random_integer.tag.result}-${count.index + 1}.${var.domain_name}"])
-  create_cert               = true
-}
+#   management_group_dsid     = var.mtls_dsid_group
+#   identity_group_dsid       = var.mtls_dsid_group
+#   cert_type                 = var.mtls_cert_type
+#   environment               = var.environment
+#   project                   = var.project_name
+#   dns_alt_names_for_web_gui = concat(var.mtls_certificate_dns_names, ["${var.project_name}-ec2-${var.server_role_name}-${random_integer.tag.result}-${count.index + 1}.${var.domain_name}"])
+#   create_cert               = true
+# }
 
 data "template_file" "ec2_userdata_tmplt" {
 
@@ -134,7 +134,7 @@ module "ec2-instance" {
     }
   )
 
-  depends_on = [module.mtls_certificate_for_ec2]
+  # depends_on = [module.mtls_certificate_for_ec2]
 }
 
 ## push that bucket to use S3 VPC endpoint instead of proxy as described in: 
