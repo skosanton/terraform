@@ -21,3 +21,8 @@ variable "additional_roles_with_permissions" {
   type        = list(any)
   description = ""
 }
+
+variable "force_destroy" {
+  default     = false
+  type        = bool
+}

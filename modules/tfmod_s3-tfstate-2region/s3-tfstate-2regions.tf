@@ -1,6 +1,10 @@
 resource "random_integer" "tag" {
   min = 1000
   max = 9999
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Create bucket policy that going to be attached to the bucket
@@ -56,11 +60,18 @@ resource "aws_kms_key" "s3-tfstate" {
       Environment  = var.environment
     }
   )
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_kms_alias" "s3-tfstate-bucket-key" {
   name          = "alias/s3-tfstate-bucket-key-${var.project_name}-${random_integer.tag.result}"
   target_key_id = aws_kms_key.s3-tfstate.key_id
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_kms_replica_key" "s3-tfstate-bucket-key_replica" {
@@ -92,12 +103,20 @@ resource "aws_kms_replica_key" "s3-tfstate-bucket-key_replica" {
       Environment  = var.environment
     }
   )
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 resource "aws_kms_alias" "s3-tfstate-bucket-key_replica" {
   provider      = aws.backup
   name          = "alias/s3-tfstate-bucket-key_replica-${var.project_name}-${random_integer.tag.result}"
   target_key_id = aws_kms_replica_key.s3-tfstate-bucket-key_replica.key_id
+
+  lifecycle {
+    prevent_destroy = true
+  }
 }
 
 # Create S3 bucket for TF State file.
@@ -106,7 +125,7 @@ module "s3-tfstate" {
   version = "3.4.0"
 
   bucket        = "${var.s3_tfstate_bucket_name}-${var.project_name}-${random_integer.tag.result}"
-  force_destroy = true
+  force_destroy = var.force_destroy
 
   # Bucket policies
   attach_policy                         = true
