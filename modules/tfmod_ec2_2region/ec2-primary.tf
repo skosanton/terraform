@@ -41,7 +41,7 @@ resource "aws_security_group" "security_group" {
 
 
 module "mtls_certificate_for_ec2" {
-  source = "git:https://github.com/skosanton/terraform.git//modules/tfmod_ec2_2region"
+  source = "git::https://github.com/skosanton/terraform.git//modules/tfmod_ec2_2region"
 
   count = var.create_mtls_cert == true ? var.number_of_ec2_instances : 0
 
