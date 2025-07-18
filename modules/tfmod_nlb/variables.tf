@@ -11,51 +11,51 @@ variable "project_name" {
 }
 
 variable "environment" {
-  default = "forgot to add variable for environment"
-  type = string
-  description = ""  
+  default     = "forgot to add variable for environment"
+  type        = string
+  description = ""
 }
 
 variable "list_of_ports_and_targets" {
   default = []
-  type = list
+  type    = list(any)
 }
 
 variable "acm_certificate_arn" {
   default     = ""
   type        = string
-  description = ""  
+  description = ""
 }
 
 variable "target_type" {
-  default = "instance"
-  type    = string
+  default     = "instance"
+  type        = string
   description = ""
 }
 
 variable "alpn_policy" {
-  default = "HTTP2Preferred"
-  type    = string
+  default     = "HTTP2Preferred"
+  type        = string
   description = ""
 }
 
 variable "ssl_policy" {
-  default = "ELBSecurityPolicy-TLS13-1-2-2021-06"
-  type    = string
+  default     = "ELBSecurityPolicy-TLS13-1-2-2021-06"
+  type        = string
   description = ""
 }
 
 variable "subnets" {
   default = []
-  type = list
+  type    = list(any)
 }
 
 variable "enable_cross_zone_load_balancing" {
   default = true
-  type = bool
+  type    = bool
 }
 
 variable "set_subnets_manually" {
   default = false
-  type = bool
+  type    = bool
 }

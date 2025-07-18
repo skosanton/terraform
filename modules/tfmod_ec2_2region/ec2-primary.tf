@@ -45,11 +45,11 @@ module "mtls_certificate_for_ec2" {
 
   count = var.create_mtls_cert == true ? var.number_of_ec2_instances : 0
 
-  management_group_dsid           = var.mtls_dsid_group
-  identity_group_dsid             = var.mtls_dsid_group
+  management_group_dsid     = var.mtls_dsid_group
+  identity_group_dsid       = var.mtls_dsid_group
   cert_type                 = var.mtls_cert_type
-  environment                     = var.environment
-  project                         = var.project_name
+  environment               = var.environment
+  project                   = var.project_name
   dns_alt_names_for_web_gui = concat(var.mtls_certificate_dns_names, ["${var.project_name}-ec2-${var.server_role_name}-${random_integer.tag.result}-${count.index + 1}.${var.domain_name}"])
   create_cert               = true
 }

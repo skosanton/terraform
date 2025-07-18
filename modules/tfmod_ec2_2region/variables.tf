@@ -160,6 +160,6 @@ variable "lambda_func_arn_vpc_s3_updater" {
 }
 
 variable "domain_name" {
-  type = string
+  type    = string
   default = "yourdomain.com"
 }

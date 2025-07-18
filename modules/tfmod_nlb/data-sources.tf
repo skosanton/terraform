@@ -67,14 +67,14 @@ data "aws_subnet" "denali_enterprise_1" {
 
 data "aws_vpc" "vpc" {
 
-   filter {
-     name = "tag-value"
-     values = [var.vpc]
-   }
-   filter {
-     name = "tag-key"
-     values = ["Name"]
-   }
+  filter {
+    name   = "tag-value"
+    values = [var.vpc]
+  }
+  filter {
+    name   = "tag-key"
+    values = ["Name"]
+  }
 }
 
 data "aws_security_group" "sharedservicessecuritygroup" {
