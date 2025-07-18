@@ -1,16 +1,3 @@
-# AWS S3 State for Terraform
-
-
-
-## This module creates S3 bucket with KMS key replica in two regions
-
-
-
-### Prerequisites 
-
-You need to configure your AWS providers so it would look like that
-
-```
 provider "aws" {
   region                    = "us-west-2"
 }
@@ -29,12 +16,12 @@ terraform {
      }
   }
 }
-```
 
 
-### Example of usage:
+terraform {
+  
+}
 
-```
 module "s3_tfstate_bucket_2_regions" {
   source = "git::https://github.com/skosanton/terraform.git//modules/tfmod_s3-tfstate-2region"
 
@@ -50,4 +37,3 @@ module "s3_tfstate_bucket_2_regions" {
   project_name                                        = "alpha"
 
 }
-```
